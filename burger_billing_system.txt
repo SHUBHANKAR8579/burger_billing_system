@@ -1,0 +1,103 @@
+﻿# Menu items
+menu = {
+    1: {"name": "aloo tikki", "price": 5},
+    2: {"name": "maharaja", "price": 10},
+    3: {"name": "mac special", "price": 15},
+    4: {"name": "bk special", "price": 35},
+    5: {"name": "crispy fried chicken", "price": 20},
+    6: {"name": "mac puff", "price": 25}
+}
+
+
+# Function to display the menu
+def display_menu():
+    print("Menu:")
+    print("Sr.\tName\t\tPrice")
+    for item in menu:
+        print(f"{item}.\t{menu[item]['name']}\t\t${menu[item]['price']}")
+
+
+# Function to take order
+def take_order():
+    order = []
+    while True:
+        item_number = int(input("Enter the serial number of the item (0 to finish): "))
+        if item_number == 0:
+            break
+        if item_number not in menu:
+            print("Invalid item number. Please try again.")
+            continue
+        quantity = int(input("Enter the quantity: "))
+        order.append({"item": item_number, "quantity": quantity})
+    return order
+
+
+# Function to calculate total price
+def calculate_total(order):
+    total = 0
+    for item in order:
+        item_price = menu[item["item"]]["price"]
+        total += item_price * item["quantity"]
+    return total
+
+
+# Function to apply discounts and charges
+def apply_discounts_charges(total):
+    is_student = input("Are you a student? (y/n): ").lower() == "y"
+    student_discount = 0
+    if is_student:
+        student_discount = total * 0.2  # 20% discount for students
+        total *= 0.8
+
+
+    need_delivery = input("Do you need delivery? (y/n): ").lower() == "y"
+    delivery_charge = 0
+    if need_delivery:
+        delivery_charge = total * 0.05  # 5% delivery charge
+        total *= 1.05
+
+
+    tip = input("Do you want to give a tip? (2/5/10/$): ")
+    tip_amount = 0
+    if tip.isdigit() and int(tip) in [2, 5, 10]:
+        tip_amount = int(tip)
+        total += tip_amount
+
+
+    return total, student_discount, delivery_charge, tip_amount
+
+
+# Function to print the bill
+def print_bill(order, total, student_discount, delivery_charge, tip_amount):
+    print("\n****************************Final Bill*****************************")
+    print("Sr.\tName\t\t\t\t\tPrice\t\t\tQuantity\t\tTotal Price")
+    for item in order:
+        item_name = menu[item["item"]]["name"]
+        item_price = menu[item["item"]]["price"]
+        item_total = item_price * item["quantity"]
+        print(f"{item['item']}.\t{item_name}\t\t${item_price}\t\t\t{item['quantity']}\t\t\t${item_total}")
+    print("-" * 70)
+    print(f"\t\t\t\t\t\t\t\t\t\t\t\t\t${total:.2f}")
+    if student_discount:
+        print(f"Student Discount (20%)\t\t\t\t\t\t-${student_discount:.2f}")
+    if delivery_charge:
+        print(f"Delivery Charge (5%)\t\t\t\t\t\t+${delivery_charge:.2f}")
+    if tip_amount:
+        print(f"Tip\t\t\t\t\t\t\t\t\t\t\t\t+${tip_amount:.2f}")
+    print("-" * 70)
+    final_total = total - student_discount + delivery_charge + tip_amount
+    print(f"Total Bill\t\t\t\t\t${final_total:.2f}")
+    print("Thank you and come again!")
+
+
+# Main program
+def main():
+    display_menu()
+    order = take_order()
+    total = calculate_total(order)
+    final_total, student_discount, delivery_charge, tip_amount = apply_discounts_charges(total)
+    print_bill(order, final_total, student_discount, delivery_charge, tip_amount)
+
+
+if __name__ == "__main__":
+    main()
